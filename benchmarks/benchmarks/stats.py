@@ -2,6 +2,7 @@ import warnings
 
 import numpy as np
 from .common import Benchmark, safe_import, is_xslow
+import random
 
 with safe_import():
     import scipy.stats as stats
@@ -39,6 +40,23 @@ class CorrelationFunctions(Benchmark):
 
     def time_barnard_exact(self, alternative):
         resBarnard = stats.barnard_exact(self.a, alternative=alternative)
+
+
+class Kendelltau(Benchmark):
+    param_names = ['nan_policy','method','variant']
+    params = [
+        ['propagate', 'raise', 'omit'],
+        ['auto', 'asymptotic', 'exact'],
+        ['b', 'c']
+    ]
+
+    def setup(self, nan_policy, method, variant):
+        s = [x for x in range(0, 500)]
+        self.a = random.shuffle(s)
+        self.b = random.shuffle(s)
+
+    def time_kendalltau(self, nan_policy, method, variant):
+        tau, p_value = stats.kendalltau(self.a, self.b, nan_policy = nan_policy, method = method)
 
 
 class InferentialStats(Benchmark):
