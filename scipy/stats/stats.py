@@ -6815,6 +6815,7 @@ def ks_1samp(x, cdf, args=(), alternative='two-sided', mode='auto'):
 
 Ks_2sampResult = KstestResult
 
+
 def _count_paths_outside_method(m, n, g, h):
     """Count the number of paths that pass outside the specified diagonal.
 
@@ -6947,6 +6948,7 @@ def _attempt_exact_2kssamp(n1, n2, g, d, alternative):
     if not (0 <= prob <= 1):
         return False, d, prob
     return True, d, prob
+
 
 def ks_2samp(data1, data2, alternative='two-sided', mode='auto'):
     """
