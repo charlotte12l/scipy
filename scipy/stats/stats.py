@@ -6948,7 +6948,6 @@ def _attempt_exact_2kssamp(n1, n2, g, d, alternative):
         return False, d, prob
     return True, d, prob
 
-@profile
 def ks_2samp(data1, data2, alternative='two-sided', mode='auto'):
     """
     Performs the two-sample Kolmogorov-Smirnov test for goodness of fit.
@@ -7056,7 +7055,6 @@ def ks_2samp(data1, data2, alternative='two-sided', mode='auto'):
     KstestResult(statistic=0.12166666666666667, pvalue=0.05401863039081145)
 
     """
-    print('yes')
     if mode not in ['auto', 'exact', 'asymp']:
         raise ValueError(f'Invalid value for mode: {mode}')
     alternative = {'t': 'two-sided', 'g': 'greater', 'l': 'less'}.get(
