@@ -1,3 +1,4 @@
+import os
 from os.path import join
 from platform import system
 
@@ -82,7 +83,12 @@ def configuration(parent_package='', top_path=None):
 
     # Type stubs
     config.add_data_files('*.pyi')
-
+    if int(os.environ.get('SCIPY_USE_PYTHRAN', 1)):
+        import pythran
+        ext = pythran.dist.PythranExtension(
+            'scipy.stats._exact_2kssamp',
+            sources=["scipy/stats/_exact_2kssamp.py"])
+        config.ext_modules.append(ext)
     return config
 
 
