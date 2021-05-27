@@ -195,8 +195,8 @@ class Distribution(Benchmark):
     ]
 
     def setup(self, distribution, properties):
-        np.random.seed(12345678)
-        self.x = np.random.rand(100)
+        rng = np.random.default_rng(12345678)
+        self.x = rng.rand(100)
 
     def time_distribution(self, distribution, properties):
         if distribution == 'gamma':
@@ -238,8 +238,8 @@ class DescriptiveStats(Benchmark):
     ]
 
     def setup(self, n_levels):
-        np.random.seed(12345678)
-        self.levels = np.random.randint(n_levels, size=(1000, 10))
+        rng = np.random.default_rng(12345678)
+        self.levels = rng.randint(n_levels, size=(1000, 10))
 
     def time_mode(self, n_levels):
         stats.mode(self.levels, axis=0)
@@ -247,10 +247,10 @@ class DescriptiveStats(Benchmark):
 
 class GaussianKDE(Benchmark):
     def setup(self):
-        np.random.seed(12345678)
+        rng = np.random.default_rng(12345678)
         n = 2000
-        m1 = np.random.normal(size=n)
-        m2 = np.random.normal(scale=0.5, size=n)
+        m1 = rng.normal(size=n)
+        m2 = rng.normal(scale=0.5, size=n)
 
         xmin = m1.min()
         xmax = m1.max()
@@ -293,8 +293,8 @@ class BinnedStatisticDD(Benchmark):
     params = ["count", "sum", "mean", "min", "max", "median", "std", np.std]
 
     def setup(self, statistic):
-        np.random.seed(12345678)
-        self.inp = np.random.rand(9999).reshape(3, 3333) * 200
+        rng = np.random.default_rng(12345678)
+        self.inp = rng.rand(9999).reshape(3, 3333) * 200
         self.subbin_x_edges = np.arange(0, 200, dtype=np.float32)
         self.subbin_y_edges = np.arange(0, 200, dtype=np.float64)
         self.ret = stats.binned_statistic_dd(
@@ -402,8 +402,8 @@ class BenchQMCDiscrepancy(Benchmark):
     ]
 
     def setup(self, method):
-        np.random.seed(1234)
-        sample = np.random.random_sample((1000, 10))
+        rng = np.random.default_rng(12345678)
+        sample = rng.random_sample((1000, 10))
         self.sample = sample
 
     def time_discrepancy(self, method):
