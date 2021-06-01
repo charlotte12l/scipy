@@ -392,3 +392,16 @@ class BenchQMCDiscrepancy(Benchmark):
 
     def time_discrepancy(self, method):
         disc = stats.qmc.discrepancy(self.sample, method=method)
+
+
+class DistanceFunctions(Benchmark):
+    def setup(self):
+        rng = np.random.default_rng(12345678)
+        self.u_values, self.u_weights = rng.random(4) * 10, rng.random(4) * 10
+        self.v_values, self.v_weights = rng.random(2) * 10, rng.random(2) * 10
+
+    def time_energy_distance(self):
+        distance = stats.energy_distance(self.u_values, self.v_values, self.u_weights, self.v_weights)
+
+    def time_wasserstein_distance(self):
+        distance = stats.wasserstein_distance(self.u_values, self.v_values, self.u_weights, self.v_weights)
