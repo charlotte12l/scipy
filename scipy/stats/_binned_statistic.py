@@ -3,6 +3,7 @@ import numpy as np
 from numpy.testing import suppress_warnings
 from operator import index
 from collections import namedtuple
+from scipy.stats.cal_bin_pythran import _calc_binned_statistic_pythran
 
 __all__ = ['binned_statistic',
            'binned_statistic_2d',
@@ -584,7 +585,8 @@ def binned_statistic_dd(sample, values, statistic='mean',
             result[vv, a] = flatsum[a] / flatcount[a]
     elif statistic == 'std':
         result.fill(0)
-        _calc_binned_statistic(Vdim, binnumbers, result, values, np.std)
+        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.std)
+        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'std')
     elif statistic == 'count':
         result.fill(0)
         flatcount = np.bincount(binnumbers, None)
@@ -598,13 +600,16 @@ def binned_statistic_dd(sample, values, statistic='mean',
             result[vv, a] = flatsum
     elif statistic == 'median':
         result.fill(np.nan)
-        _calc_binned_statistic(Vdim, binnumbers, result, values, np.median)
+        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.median)
+        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'median')
     elif statistic == 'min':
         result.fill(np.nan)
-        _calc_binned_statistic(Vdim, binnumbers, result, values, np.min)
+        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.min)
+        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'min')
     elif statistic == 'max':
         result.fill(np.nan)
-        _calc_binned_statistic(Vdim, binnumbers, result, values, np.max)
+        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.max)
+        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'max')
     elif callable(statistic):
         with np.errstate(invalid='ignore'), suppress_warnings() as sup:
             sup.filter(RuntimeWarning)
