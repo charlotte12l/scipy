@@ -1,7 +1,7 @@
 import numpy as np
 
 #pythran export _sum_abs_axis0_pythran(float[:,:])
-def _sum_abs_axis0_pythran(X):
+def _sum_abs_axis0_pythran(X):# open an issue
     block_size = 2**20
     r = None
     for j in range(0, X.shape[0], block_size):
