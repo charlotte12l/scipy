@@ -4,8 +4,8 @@ import math
 from timeit import timeit
 from scipy.sparse import coo_matrix
 from scipy.sparse import triu
-# from scipy.sparse.linalg import expm
-from scipy.linalg import expm
+from scipy.sparse.linalg import expm
+# from scipy.linalg import expm
 print(scipy.__file__)
 
 def random_sparse_csc(m, n, nnz_per_row, rng):
@@ -19,20 +19,20 @@ def random_sparse_csc(m, n, nnz_per_row, rng):
     return M.tocsc()
 
 rng = np.random.default_rng(123)
-n = 100
+n = 9000
 # Let the number of nonzero entries per row
 # scale like the log of the order of the matrix.
 nnz_per_row = int(math.ceil(math.log(n)))
 
 # time the sampling of a random sparse matrix
 A_sparse = random_sparse_csc(n, n, nnz_per_row, rng)
-# A_sparse = triu(A_sparse, format='csc')
+A_sparse = triu(A_sparse, format='csc')
 # first format conversion
 A_dense = A_sparse.toarray()
 
 f1 = lambda: expm(A_sparse)
 f2 = lambda: expm(A_dense)
 
-print(timeit(f1, number=100)) 
+print(timeit(f1, number=1)) 
 # print(A_sparse)
-print(timeit(f2, number=1)) 
+# print(timeit(f2, number=1)) 

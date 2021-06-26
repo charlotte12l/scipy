@@ -25,7 +25,7 @@ import scipy.sparse.linalg
 from scipy.sparse.linalg.interface import LinearOperator
 
 from ._expm_multiply import _ident_like, _exact_1_norm as _onenorm
-
+from .matfuncs_pythran import _fragment_2_1_pythran
 
 UPPER_TRIANGULAR = 'upper_triangular'
 
@@ -651,11 +651,11 @@ def _expm(A, use_exact_onenorm):
     # Try Pade orders 7 and 9.
     eta_3 = max(h.d6_tight, h.d8_loose)
     if eta_3 < 9.504178996162932e-001 and _ell(h.A, 7) == 0:
-        # print('3.6')
+        print('3.6')
         U, V = h.pade7()
         return _solve_P_Q(U, V, structure=structure)
     if eta_3 < 2.097847961257068e+000 and _ell(h.A, 9) == 0:
-        # print('3.7')
+        print('3.7')
         U, V = h.pade9()
         return _solve_P_Q(U, V, structure=structure)
 
@@ -663,7 +663,7 @@ def _expm(A, use_exact_onenorm):
     eta_4 = max(h.d8_loose, h.d10_loose)
     eta_5 = min(eta_3, eta_4)
     theta_13 = 4.25
-    # print('4')
+    print('4')
     # Choose smallest s>=0 such that 2**(-s) eta_5 <= theta_13
     if eta_5 == 0:
         # Nilpotent special case
@@ -673,11 +673,12 @@ def _expm(A, use_exact_onenorm):
     s = s + _ell(2**-s * h.A, 13)
     U, V = h.pade13_scaled(s)
     X = _solve_P_Q(U, V, structure=structure)
-    # print('6', structure,s)
+    print('6', structure,s)
     if structure == UPPER_TRIANGULAR:
         # Invoke Code Fragment 2.1.
-        print(X, h.A, s)
-        X = _fragment_2_1(X, h.A, s)
+        # print(X, h.A, s)
+        # X = _fragment_2_1(X, h.A, s)
+        X = _fragment_2_1_pythran(X, h.A, s)
     else:
         # X = r_13(A)^(2^s) by repeated squaring.
         for i in range(s):
