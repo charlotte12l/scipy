@@ -8,10 +8,6 @@ subbin_x_edges = np.arange(0, 200, dtype=np.float32)
 subbin_y_edges = np.arange(0, 200, dtype=np.float64)
 
 
-stats.binned_statistic_dd(
-    [inp[0], inp[1]], inp[2], statistic='count',
-    bins=[subbin_x_edges, subbin_y_edges])
-
 f_min = lambda: stats.binned_statistic_dd(
     [inp[0], inp[1]], inp[2], statistic='min',
     bins=[subbin_x_edges, subbin_y_edges])
