@@ -16,18 +16,16 @@ def _create_binned_data_pythran(bin_numbers, unique_bin_numbers, values, vv):
     return bin_map
 
 
-
-#pythran export _calc_bin_more_pythran(int, int[:], int[:], int[:,:], str)
-def _calc_bin_more_pythran(Vdim, binnumbers, nbin, values, statistic):
-
-    result = np.empty([Vdim, nbin.prod()], float)
-
+#pythran export _calc_bin_more_pythran(int, int[:], float[:,:], float[:,:], str)
+#pythran export _calc_bin_more_pythran(int, int[:], float[:,:], int[:,:], str)
+def _calc_bin_more_pythran(Vdim, binnumbers, result, values, statistic):
     if statistic == 'mean':
         result.fill(np.nan)
         flatcount = np.bincount(binnumbers)
         a = flatcount.nonzero()
         for vv in builtins.range(Vdim):
             flatsum = np.bincount(binnumbers, values[vv])
+            # result[vv, a] = flatsum[a] / flatcount[a]
             for i in a:
                 result[vv, i] = flatsum[i] / flatcount[i]
     elif statistic == 'std':
@@ -35,25 +33,24 @@ def _calc_bin_more_pythran(Vdim, binnumbers, nbin, values, statistic):
         unique_bin_numbers = np.unique(binnumbers)
         for vv in builtins.range(Vdim):
             bin_map = _create_binned_data_pythran(binnumbers, unique_bin_numbers,
-                                        values, vv)
+                                        values, vv)       
             for i in unique_bin_numbers:
-                result[vv, i] = np.std(np.array(bin_map[i]))
+                if (len(bin_map[i]) >= 2):
+                    result[vv, i] = np.std(np.array(bin_map[i]))
     elif statistic == 'count':
         result.fill(0)
         flatcount = np.bincount(binnumbers)
         a = np.arange(len(flatcount))
-        result[:, a] = flatcount[np.newaxis, :]
-        # flatcount = np.expand_dims(flatcount, axis=0)
-        # flatcount_2d = flatcount[np.newaxis, :]
-        # for i in a:
-        #     result[0, i] = flatcount[i]
+        # flatcount_2d = flatcount.reshape((1,len(flatcount)))
+        # result[:, a] = flatcount_2d
+        for vv in builtins.range(Vdim):
+            result[vv, a] = flatcount
     elif statistic == 'sum':
         result.fill(0)
         for vv in builtins.range(Vdim):
             flatsum = np.bincount(binnumbers, values[vv])
             a = np.arange(len(flatsum))
-            for i in a:
-                result[vv, i] = flatsum[i]
+            result[vv, a] = flatsum
     elif statistic == 'median':
         result.fill(np.nan)
         unique_bin_numbers = np.unique(binnumbers)
@@ -77,6 +74,6 @@ def _calc_bin_more_pythran(Vdim, binnumbers, nbin, values, statistic):
             bin_map = _create_binned_data_pythran(binnumbers, unique_bin_numbers,
                                         values, vv)
             for i in unique_bin_numbers:
-                result[vv, i] = np.max(np.array(bin_map[i]))
-    else:
-        pass      
+                result[vv, i] = np.max(np.array(bin_map[i]))    
+
+    return result

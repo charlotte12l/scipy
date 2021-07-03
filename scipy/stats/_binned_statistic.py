@@ -3,7 +3,8 @@ import numpy as np
 from numpy.testing import suppress_warnings
 from operator import index
 from collections import namedtuple
-from scipy.stats.cal_bin_pythran import _calc_binned_statistic_pythran
+from scipy.stats.cal_bin_more_pythran import _calc_bin_more_pythran
+# from scipy.stats.cal_bin_pythran import _calc_binned_statistic_pythran
 
 __all__ = ['binned_statistic',
            'binned_statistic_2d',
@@ -576,41 +577,7 @@ def binned_statistic_dd(sample, values, statistic='mean',
 
     result = np.empty([Vdim, nbin.prod()], float)
 
-    if statistic == 'mean':
-        result.fill(np.nan)
-        flatcount = np.bincount(binnumbers, None)
-        a = flatcount.nonzero()
-        for vv in builtins.range(Vdim):
-            flatsum = np.bincount(binnumbers, values[vv])
-            result[vv, a] = flatsum[a] / flatcount[a]
-    elif statistic == 'std':
-        result.fill(0)
-        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.std)
-        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'std')
-    elif statistic == 'count':
-        result.fill(0)
-        flatcount = np.bincount(binnumbers, None)
-        a = np.arange(len(flatcount))
-        result[:, a] = flatcount[np.newaxis, :]
-    elif statistic == 'sum':
-        result.fill(0)
-        for vv in builtins.range(Vdim):
-            flatsum = np.bincount(binnumbers, values[vv])
-            a = np.arange(len(flatsum))
-            result[vv, a] = flatsum
-    elif statistic == 'median':
-        result.fill(np.nan)
-        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.median)
-        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'median')
-    elif statistic == 'min':
-        result.fill(np.nan)
-        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.min)
-        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'min')
-    elif statistic == 'max':
-        result.fill(np.nan)
-        # _calc_binned_statistic(Vdim, binnumbers, result, values, np.max)
-        _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'max')
-    elif callable(statistic):
+    if callable(statistic):
         with np.errstate(invalid='ignore'), suppress_warnings() as sup:
             sup.filter(RuntimeWarning)
             try:
@@ -620,6 +587,52 @@ def binned_statistic_dd(sample, values, statistic='mean',
         result.fill(null)
         _calc_binned_statistic(Vdim, binnumbers, result, values, statistic,
                                is_callable=True)
+    else:
+        result = _calc_bin_more_pythran(Vdim, binnumbers, result, values, statistic)
+    # if statistic == 'mean':
+    #     result.fill(np.nan)
+    #     flatcount = np.bincount(binnumbers, None)
+    #     a = flatcount.nonzero()
+    #     for vv in builtins.range(Vdim):
+    #         flatsum = np.bincount(binnumbers, values[vv])
+    #         result[vv, a] = flatsum[a] / flatcount[a]
+    # elif statistic == 'std':
+    #     result.fill(0)
+    #     _calc_binned_statistic(Vdim, binnumbers, result, values, np.std)
+    #     # _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'std')
+    # elif statistic == 'count':
+    #     result.fill(0)
+    #     flatcount = np.bincount(binnumbers, None)
+    #     a = np.arange(len(flatcount))
+    #     result[:, a] = flatcount[np.newaxis, :]
+    # elif statistic == 'sum':
+    #     result.fill(0)
+    #     for vv in builtins.range(Vdim):
+    #         flatsum = np.bincount(binnumbers, values[vv])
+    #         a = np.arange(len(flatsum))
+    #         result[vv, a] = flatsum
+    # elif statistic == 'median':
+    #     result.fill(np.nan)
+    #     _calc_binned_statistic(Vdim, binnumbers, result, values, np.median)
+    #     # _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'median')
+    # elif statistic == 'min':
+    #     result.fill(np.nan)
+    #     _calc_binned_statistic(Vdim, binnumbers, result, values, np.min)
+    #     # _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'min')
+    # elif statistic == 'max':
+    #     result.fill(np.nan)
+    #     _calc_binned_statistic(Vdim, binnumbers, result, values, np.max)
+    #     # _calc_binned_statistic_pythran(Vdim, binnumbers, result, values, 'max')
+    # elif callable(statistic):
+    #     with np.errstate(invalid='ignore'), suppress_warnings() as sup:
+    #         sup.filter(RuntimeWarning)
+    #         try:
+    #             null = statistic([])
+    #         except Exception:
+    #             null = np.nan
+    #     result.fill(null)
+    #     _calc_binned_statistic(Vdim, binnumbers, result, values, statistic,
+    #                            is_callable=True)
 
     # Shape into a proper matrix
     result = result.reshape(np.append(Vdim, nbin))

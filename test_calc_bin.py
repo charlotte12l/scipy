@@ -7,6 +7,17 @@ inp = rng.random(9999).reshape(3, 3333) * 200
 subbin_x_edges = np.arange(0, 200, dtype=np.float32)
 subbin_y_edges = np.arange(0, 200, dtype=np.float64)
 
+f_mean = lambda: stats.binned_statistic_dd(
+    [inp[0], inp[1]], inp[2], statistic='mean',
+    bins=[subbin_x_edges, subbin_y_edges])
+
+f_count = lambda: stats.binned_statistic_dd(
+    [inp[0], inp[1]], inp[2], statistic='count',
+    bins=[subbin_x_edges, subbin_y_edges])
+
+f_sum = lambda: stats.binned_statistic_dd(
+    [inp[0], inp[1]], inp[2], statistic='sum',
+    bins=[subbin_x_edges, subbin_y_edges])
 
 f_min = lambda: stats.binned_statistic_dd(
     [inp[0], inp[1]], inp[2], statistic='min',
@@ -24,6 +35,11 @@ f_median = lambda: stats.binned_statistic_dd(
     [inp[0], inp[1]], inp[2], statistic='median',
     bins=[subbin_x_edges, subbin_y_edges])
 
+
+
+print(timeit(f_mean, number=100)) # 0.07811030500000005
+print(timeit(f_count, number=100)) # 0.0776072029999999
+print(timeit(f_sum, number=100)) # 0.0751404899999999
 print(timeit(f_min, number=100)) # 1.3672322449999998 vs 0.40702188699999997(python vs pythran)
 print(timeit(f_max, number=100)) # 1.346275941 vs 0.496832677
 print(timeit(f_std, number=100)) # 0.47545129600000013 vs 0.3890081329999999
