@@ -12,7 +12,6 @@ def remaining_filter(remaining, current_simplex):
 
 #pythran export sort_vertices_of_regions(int[:,:], int list list)
 #pythran export sort_vertices_of_regions(int32[:,:], int64 list list)
-#pythran export sort_vertices_of_regions(int[:,:], int[:,:])
 def sort_vertices_of_regions(simplices, regions):
     sorted_vertices = np.empty(max([len(region) for region
                                in regions]),
@@ -55,3 +54,4 @@ def sort_vertices_of_regions(simplices, regions):
             remaining_filter(remaining, current_simplex)
         regions_arr = np.asarray(sorted_vertices)
         regions[n] = list(regions_arr[regions_arr > ARRAY_FILLER])
+    return regions

@@ -262,10 +262,10 @@ class SphericalVoronoi:
         """
         if self._dim != 3:
             raise TypeError("Only supported for three-dimensional point sets")
-        sort_vertices_of_regions(self._simplices, self.regions)
+        self.regions = sort_vertices_of_regions(self._simplices, self.regions)
 
     def _calculate_areas_3d(self):
-        self.sort_vertices_of_regions()
+        self.regions = self.sort_vertices_of_regions()
         sizes = [len(region) for region in self.regions]
         csizes = np.cumsum(sizes)
         num_regions = csizes[-1]
