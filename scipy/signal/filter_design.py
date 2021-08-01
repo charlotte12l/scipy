@@ -4273,7 +4273,8 @@ def _arc_jac_sc1(w, m):
 
     References
     ----------
-    .. [1] https://functions.wolfram.com/EllipticFunctions/JacobiSC/introductions/JacobiPQs/ShowAll.html, 
+    # noqa: E501
+    .. [1] https://functions.wolfram.com/EllipticFunctions/JacobiSC/introductions/JacobiPQs/ShowAll.html,
        "Representations through other Jacobi functions"
 
     """
