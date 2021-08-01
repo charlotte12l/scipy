@@ -18,7 +18,7 @@ from scipy.special import comb
 from scipy._lib._util import float_factorial
 from scipy.optimize import root_scalar
 
-from filter_design_pythran import (
+from ._filter_design_pythran import (
     _falling_factorial, _bessel_poly,_arc_jac_sn,
     _cplxreal as _cplxreal_pythran)
 
