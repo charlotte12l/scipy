@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-#pythran export _cplxreal(complex[:],float)
+#pythran export _cplxreal(complex[:] or float[:], float)
 def _cplxreal(z, tol):
     # Sort by real part, magnitude of imaginary part (speed up further sorting)
     z = z[np.lexsort((abs(z.imag), z.real))]
